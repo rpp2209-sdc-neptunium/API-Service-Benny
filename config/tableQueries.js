@@ -11,9 +11,10 @@ exports.results = `CREATE TABLE IF NOT EXISTS results (
 
 exports.reviews = `CREATE TABLE IF NOT EXISTS reviews (
   review_id SERIAL PRIMARY KEY,
+  id INTEGER UNIQUE NOT NULL,
   rating INTEGER NOT NULL,
   date TIMESTAMP NOT NULL,
-  summary VARCHAR(50),
+  summary VARCHAR(100),
   body VARCHAR(1000),
   recommend BOOLEAN NOT NULL,
   reported BOOLEAN NOT NULL,
