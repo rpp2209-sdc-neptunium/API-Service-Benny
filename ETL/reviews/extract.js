@@ -1,4 +1,4 @@
-const reviews = require('../config/db.js');
+const reviews = require('../../config/db.js');
 const fs = require('fs');
 const { parse } = require('csv-parse');
 

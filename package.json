@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "run db": "node db.j"
+    "start-db": "node config/db.js",
+    "load-reviews": "node ETL/reviews/load.js",
+    "load-photos": "node ETL/photos/load.js",
+    "load-characteristics": "node ETL/characteristics/load.js",
+    "load-characteristic_reviews": "node ETL/characteristics/reviews-loads.js"
   },
   "repository": {
     "type": "git",

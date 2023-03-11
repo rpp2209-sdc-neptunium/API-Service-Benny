@@ -28,3 +28,22 @@ exports.reviewers = `CREATE TABLE IF NOT EXISTS reviewers (
   reviewer_name VARCHAR(50),
   reviewer_email VARCHAR(100) UNIQUE
 );`;
+
+exports.reviews_photos =`CREATE TABLE IF NOT EXISTS reviews_photos (
+  id SERIAL PRIMARY KEY,
+  review_id INTEGER NOT NULL,
+  url TEXT NOT NULL
+);`;
+
+exports.characteristics = `CREATE TABLE IF NOT EXISTS characteristics (
+  id SERIAL PRIMARY KEY,
+  product_id INTEGER NOT NULL,
+  name VARCHAR(100)
+)`;
+
+exports.characteristic_reviews = `CREATE TABLE IF NOT EXISTS characteristic_reviews (
+  id SERIAL PRIMARY KEY,
+  characteristic_id INTEGER NOT NULL REFERENCES characteristics (id),
+  review_id INTEGER NOT NULL,
+  value INTEGER NOT NULL
+)`;

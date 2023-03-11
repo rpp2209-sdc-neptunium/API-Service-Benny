@@ -21,6 +21,15 @@ reviews.query(createTableQuery.products)
 .then(() => {
   return reviews.query(createTableQuery.results);
 })
+.then(() => {
+  return reviews.query(createTableQuery.reviews_photos);
+})
+.then(() => {
+  return reviews.query(createTableQuery.characteristics);
+})
+.then(() => {
+  return reviews.query(createTableQuery.characteristic_reviews);
+})
 .catch((err) => {
   console.error(err);
 })
