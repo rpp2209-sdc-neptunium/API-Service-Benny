@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "start-db": "node config/db.js",
+    "server": "node server-index.js",
     "load-reviews": "node ETL/reviews/load.js",
     "load-photos": "node ETL/photos/load.js",
     "load-characteristics": "node ETL/characteristics/load.js",
