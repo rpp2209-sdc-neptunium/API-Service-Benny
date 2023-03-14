@@ -47,3 +47,11 @@ exports.characteristic_reviews = `CREATE TABLE IF NOT EXISTS characteristic_revi
   review_id INTEGER NOT NULL,
   value INTEGER NOT NULL
 )`;
+
+exports.indexes = `
+  CREATE INDEX IF NOT EXISTS products_product_id_idx ON products (product_id);
+  CREATE INDEX IF NOT EXISTS results_product_id_idx ON results (product_id);
+  CREATE INDEX IF NOT EXISTS results_review_id_idx ON results (review_id);
+  CREATE INDEX IF NOT EXISTS reviews_id_idx ON reviews (id);
+  CREATE INDEX IF NOT EXISTS reviews_photos_idx ON reviews_photos (review_id);
+`

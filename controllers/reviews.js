@@ -8,8 +8,8 @@ module.exports = {
     req.query.count = req.query.count || 5;
     req.query.limit = req.query.count * req.query.page;
     models.reviews.getAll(req.query)
-    .then((res) => {
-      res.status(201).json(res.rows);
+    .then((data) => {
+      res.status(201).json(data.rows);
     })
     .catch((err) => {
       console.error(err);

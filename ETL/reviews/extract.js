@@ -2,7 +2,7 @@ const reviews = require('../../config/db.js');
 const fs = require('fs');
 const { parse } = require('csv-parse');
 
-const filePath = '/home/benny/hackreactor/systems-design-capstone/reviews.csv';
+const filePath = '/mnt/c/users/vbenn/downloads/reviews.csv';
 // const copyCommand = `
 //   COPY reviews(id,product_id,rating,date,summary,body,recommend,reported,reviewer_name,reviewer_email,response,helpfulness)
 //   FROM '/home/benny/hackreactor/systems-design-capstone/reviews.csv'

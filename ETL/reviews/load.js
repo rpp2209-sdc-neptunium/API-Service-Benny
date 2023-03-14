@@ -1,7 +1,7 @@
 const { parse } = require('csv-parse');
 const fs = require('fs');
 const readStream = require('./extract.js');
-const reviews = require('../config/db.js');
+const reviews = require('../../config/db');
 const transformRecord = require('./transform.js')
 
 const parser = parse({
@@ -14,9 +14,7 @@ const failedRecords = [];
 
 parser.on('data', async (record) => {
   var record = transformRecord(record);
-  if (record.id <= 2344615) {
-    readStream.pause();
-    parser.pause();
+  if (record.id <= 2367189) {
     parser.resume();
     readStream.resume();
     return;
@@ -50,7 +48,7 @@ parser.on('data', async (record) => {
 })
 
 readStream.on('error', (err) => {
-  console.err(err);
+  console.error(err);
 })
 
 parser.on('error', (err) => {
