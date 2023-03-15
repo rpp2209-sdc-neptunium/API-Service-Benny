@@ -54,4 +54,6 @@ exports.indexes = `
   CREATE INDEX IF NOT EXISTS results_review_id_idx ON results (review_id);
   CREATE INDEX IF NOT EXISTS reviews_id_idx ON reviews (id);
   CREATE INDEX IF NOT EXISTS reviews_photos_idx ON reviews_photos (review_id);
+  CREATE INDEX IF NOT EXISTS characteristics_product_id_idx ON characteristics (product_id);
+  CREATE INDEX IF NOT EXISTS characteristics_id_idx ON characteristic_reviews (characteristic_id);
 `
