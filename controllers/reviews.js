@@ -21,23 +21,36 @@ module.exports = {
     })
   },
 
-  getMeta: async (req, res) => {
-    try {
-      var characteristics = await models.reviews.getCharacteristics(req.query);
-      var recommend = await models.reviews.getRecommend(req.query);
-      var ratings = await models.reviews.getRatings(req.query);
-
-      var response = {
-        'product_id': req.query.product_id,
-        characteristics,
-        recommend,
-        ratings
-      };
-
-      res.status(200).json(response);
-    } catch (err) {
+  post: (req, res) => {
+    models.reviews.post(req.body)
+    .then((data) => {
+      res.status(201).end();
+    })
+    .catch((err) => {
       console.error(err);
       res.status(400);
-    }
+    })
+  },
+
+  updateHelpful: (req, res) => {
+    models.reviews.updateHelpful(req.params.review_id)
+    .then((data) => {
+      res.status(201).end();
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(400);
+    })
+  },
+
+  report: (req, res) => {
+    models.reviews.report(req.params.review_id)
+    .then((data) => {
+      res.status(201).end();
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(400);
+    });
   }
 };

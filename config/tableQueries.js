@@ -11,7 +11,7 @@ exports.results = `CREATE TABLE IF NOT EXISTS results (
 
 exports.reviews = `CREATE TABLE IF NOT EXISTS reviews (
   review_id SERIAL PRIMARY KEY,
-  id INTEGER UNIQUE NOT NULL,
+  id INTEGER NOT NULL,
   rating INTEGER NOT NULL,
   date TIMESTAMP NOT NULL,
   summary VARCHAR(100),
@@ -56,4 +56,29 @@ exports.indexes = `
   CREATE INDEX IF NOT EXISTS reviews_photos_idx ON reviews_photos (review_id);
   CREATE INDEX IF NOT EXISTS characteristics_product_id_idx ON characteristics (product_id);
   CREATE INDEX IF NOT EXISTS characteristics_id_idx ON characteristic_reviews (characteristic_id);
+`
+
+//post ETL, to perform ELT
+exports.updateReview_Photos = `
+UPDATE reviews_photos
+SET review_id = (
+  SELECT review_id
+  FROM reviews
+  WHERE reviews.id = reviews_photos.review_id
+)
+WHERE EXISTS (
+  SELECT 1
+  FROM reviews
+  WHERE reviews.id = reviews_photos.review_id
+);`;
+
+//took 11:58 minutes
+exports.updateChar = `
+UPDATE characteristic_reviews
+SET review_id = COALESCE(
+  (SELECT review_id
+  FROM reviews
+  WHERE reviews.id = characteristic_reviews.review_id),
+  review_id
+);
 `
