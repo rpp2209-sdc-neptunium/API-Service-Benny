@@ -5,7 +5,7 @@ const reviews = new Pool({
   user: 'postgres',
   password: 'pass',
   host: 'localhost',
-  database: 'sdc_reviews_test',
+  database: 'sdc-reviews',
   port: 5432,
 });
 

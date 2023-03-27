@@ -4,10 +4,10 @@ module.exports = {
   get: async (param) => {
     var characteristics = {};
     try {
-      var data = await db.query(`SELECT characteristic_reviews.characteristic_id, characteristics.name, AVG(characteristic_reviews.value) as value from characteristic_reviews
+      var data = await db.query(`SELECT characteristics.id, characteristics.name, AVG(characteristic_reviews.value) as value from characteristic_reviews
     INNER JOIN characteristics ON characteristic_reviews.characteristic_id = characteristics.id
     WHERE characteristics.product_id = ${param.product_id}
-    GROUP BY characteristics.name, characteristic_reviews.characteristic_id;`);
+    GROUP BY characteristics.name, characteristics.id;`);
 
       data.rows.forEach(row => {
         characteristics[row.name] = {
@@ -22,7 +22,7 @@ module.exports = {
     }
   },
 
-  post: async (record, review_id) => {
+  post: async (record, review_id, dbs = db) => {
     try {
       var queries = [];
       for (const key of Object.keys(record.characteristics)) {
@@ -32,7 +32,7 @@ module.exports = {
         VALUES ('${key}', '${review_id}', '${value}');`
         queries.push(query);
       }
-      return db.query(`BEGIN; ${queries.join(' ')} COMMIT;`);
+      return dbs.query(`BEGIN; ${queries.join(' ')} COMMIT;`);
     } catch (error) {
       console.error(error);
       return 'error';

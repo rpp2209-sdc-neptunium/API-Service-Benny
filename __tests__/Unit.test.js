@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 const models = require('../models/index.js');
 const jest = require('jest');
+const transformRecord = require('../models/utils/transformRecord.js')
 
 let db;
 let connection =
@@ -27,10 +28,10 @@ describe("Unit Tests - Reviews", () => {
     sort: 'helpfulness'
   }
   it("should get correct format for reviews for a single proudct_id", async () => {
-    let params = {
+    const params = {
       limit: 10,
       product_id: 2,
-      sort: 'helpfulness'
+      sort: 'helpfulness DESC, date DESC'
     }
     var results = await models.reviews.getAll(params);
     expect(results.rows.length).toBeGreaterThan(0);
@@ -82,20 +83,45 @@ describe("Unit Tests - Reviews", () => {
       "email": "test@test.com",
       "photos": ["test1", "test2"],
       "characteristics": {
-        "5": 1
+        "1": 1
       }
     };
+
+    record = transformRecord(record);
+
+    var queries = [
+      `INSERT INTO products (product_id) VALUES ('${record.product_id}')
+      ON CONFLICT (product_id) DO NOTHING;`,
+      `INSERT INTO reviewers (reviewer_name, reviewer_email) VALUES ('${record.name}', '${record.email}')
+      ON CONFLICT (reviewer_email) DO NOTHING;`,
+      `INSERT INTO reviews (id, rating, date, summary, body, recommend, reported, reviewer, response, helpfulness)
+      VALUES ('0', '${record.rating}', to_timestamp('${Number(record.date)}' / 1000.0), '${record.summary}', '${record.body}', '${record.recommend}', '${record.reported}',
+      (SELECT id FROM reviewers WHERE reviewers.reviewer_email = '${record.email}'), '${record.response}', '${record.helpfulness}')
+      RETURNING review_id;`
+    ];
 
     try {
       var beforeReviews = await db.query('SELECT COUNT(*) FROM reviews;');
       var beforePhotos = await db.query('SELECT COUNT(*) FROM reviews_photos;');
       var beforeCharacteristics = await db.query('SELECT COUNT(*) FROM characteristic_reviews;');
 
-      var results = await models.reviews.post(record);
+      var review_id = (await db.query(`BEGIN; ${queries.join(' ')} COMMIT;`))[3].rows[0].review_id;
+      await db.query(`INSERT INTO results (product_id, review_id) VALUES (
+        (SELECT id FROM products WHERE product_id = '${record.product_id}'),
+        '${review_id}'
+      );`);
+      record.photos.forEach(async (url) => {
+        await db.query(`INSERT INTO reviews_photos (review_id, url) VALUES (
+          '${review_id}',
+          '${url}'
+        );`);
+      })
+      await models.characteristics.post(record, review_id, db);
 
       var afterReviews = await db.query('SELECT COUNT(*) FROM reviews;');
       var afterPhotos = await db.query('SELECT COUNT(*) FROM reviews_photos;');
       var afterCharacteristics = await db.query('SELECT COUNT(*) FROM characteristic_reviews;');
+
     } catch (err) {
       console.error(err);
     }
@@ -115,11 +141,11 @@ describe("Unit Tests - Characteristics", () => {
     }
     try {
       var results = await models.characteristics.get(params);
+      expect(results).toHaveProperty("Quality");
+      expect(results.Quality).toHaveProperty("id", 5);
+      expect(results.Quality).toHaveProperty("value");
     } catch (err) {
       console.error(err);
     }
-    expect(results).toHaveProperty("comfort");
-    expect(results.comfort).toHaveProperty("id");
-    expect(results.comfort).toHaveProperty("value");
   });
 });

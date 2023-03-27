@@ -4,12 +4,14 @@ const formatRatings = require('./utils/formatRatings.js');
 const characteristics = require('./characteristics.js');
 
 module.exports = {
-  getAll: (param) => {
+  getAll: (param, dbs = db) => {
     const cols = ['reviews.review_id', 'reviews.rating', 'reviews.date',
       'reviews.summary', 'reviews.body', 'reviews.recommend', 'reviews.reported', 'reviews.response',
       'reviewers.reviewer_name', 'reviewers.reviewer_email', 'reviews.helpfulness']
 
-    return db.query(`SELECT ${cols.join(',')}, array_agg(reviews_photos.url) AS photos
+    return dbs.query(`SELECT ${cols.join(',')}, array_remove(array_agg(CASE WHEN reviews_photos.id IS NOT NULL
+      THEN json_build_object('id', reviews_photos.id, 'url', reviews_photos.url)::jsonb
+      ELSE NULL END), NULL) AS photos
     FROM results
     INNER JOIN products ON results.product_id = products.id
     INNER JOIN reviews ON results.review_id = reviews.review_id
@@ -17,7 +19,7 @@ module.exports = {
     LEFT JOIN reviews_photos ON reviews_photos.review_id = reviews.id
     WHERE products.product_id = ${param.product_id}
     GROUP BY ${cols.join(', ')}
-    ORDER BY ${param.sort} DESC Limit ${param.limit};`)
+    ORDER BY ${param.sort} Limit ${param.limit};`)
   },
 
   getRecommend: async (param) => {
@@ -92,12 +94,12 @@ module.exports = {
         (SELECT id FROM products WHERE product_id = '${record.product_id}'),
         '${review_id}'
       );`);
-      await Promise.all(record.photos.map((url) => {
-        return db.query(`INSERT INTO reviews_photos (review_id, url) VALUES (
+      record.photos.forEach( async (url) => {
+        await db.query(`INSERT INTO reviews_photos (review_id, url) VALUES (
           '${review_id}',
           '${url}'
         );`);
-      }))
+      })
       await characteristics.post(record, review_id);
       return 'POST success';
     } catch (error) {

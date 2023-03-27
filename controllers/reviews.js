@@ -1,12 +1,10 @@
-
 var models = require('../models/index.js');
+var transformParam = require('./utils/transformParam.js');
 
 module.exports = {
   get: (req, res) => {
-    req.query.page = req.query.page || 1;
-    req.query.count = req.query.count || 5;
-    req.query.limit = req.query.count * req.query.page;
-    models.reviews.getAll(req.query)
+    var param = transformParam(req.query);
+    models.reviews.getAll(param)
     .then((data) => {
       let response = {};
       response.product = req.query.product_id;

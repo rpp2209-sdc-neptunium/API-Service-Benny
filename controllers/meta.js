@@ -2,6 +2,8 @@ var models = require('../models/index.js');
 
 module.exports = {
   get: async (req, res) => {
+    //transform req.query
+    req.query.sort = 'helpfulness';
     try {
       var characteristics = await models.characteristics.get(req.query);
       var recommend = await models.reviews.getRecommend(req.query);
