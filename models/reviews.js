@@ -16,7 +16,7 @@ module.exports = {
     INNER JOIN products ON results.product_id = products.id
     INNER JOIN reviews ON results.review_id = reviews.review_id
     INNER JOIN reviewers ON reviews.reviewer = reviewers.id
-    LEFT JOIN reviews_photos ON reviews_photos.review_id = reviews.id
+    LEFT JOIN reviews_photos ON reviews_photos.review_id = reviews.review_id
     WHERE products.product_id = ${param.product_id}
     GROUP BY ${cols.join(', ')}
     ORDER BY ${param.sort} Limit ${param.limit};`)
