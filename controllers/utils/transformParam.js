@@ -11,5 +11,10 @@ module.exports = (param) => {
   } else {
     param.sort = 'helpfulness DESC';
   }
+
+  if (param.product_id === 'test') {
+    const randomNumber = Math.floor(Math.random() * (360000 - 300000 + 1)) + 300000;
+    param.product_id = randomNumber;
+  }
   return param;
 };

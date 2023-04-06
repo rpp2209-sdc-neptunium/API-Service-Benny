@@ -2,10 +2,10 @@ const { Pool } = require('pg');
 const createTableQuery = require('./tableQueries.js');
 
 const reviews = new Pool({
-  user: 'postgres',
-  password: 'pass',
-  host: 'localhost',
-  database: 'sdc-reviews',
+  user: process.env.db_user,
+  password: process.env.db_pass,
+  host: process.env.db_host,
+  database: process.env.db_database,
   port: 5432,
 });
 
