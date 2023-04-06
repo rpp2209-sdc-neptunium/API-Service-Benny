@@ -1,16 +1,16 @@
 var models = require('../models/index.js');
 var transformParam = require('./utils/transformParam.js');
+var transformResponse = require('./utils/transformResponse.js');
 
 module.exports = {
   get: (req, res) => {
+    //normalize the req.query
     var param = transformParam(req.query);
+
+    //get data
     models.reviews.getAll(param)
     .then((data) => {
-      let response = {};
-      response.product = req.query.product_id;
-      response.page = req.query.page;
-      response.count = req.query.count;
-      response.results = data.rows
+      var response = transformResponse(req, data);
       res.status(200).json(response);
     })
     .catch((err) => {
