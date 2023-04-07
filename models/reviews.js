@@ -44,7 +44,7 @@ module.exports = {
       return recommend;
     } catch (err) {
       console.error('in getRecommend', err);
-      return err;
+      return Promise.reject(err);
     }
   },
 
@@ -71,7 +71,7 @@ module.exports = {
       return ratings;
     } catch (err) {
       console.error('in getRatings', err);
-      return err;
+      return Promise.reject(err);
     }
   },
 
@@ -104,7 +104,7 @@ module.exports = {
       return 'POST success';
     } catch (error) {
       console.error(error);
-      return error;
+      return Promise.reject(error);
     }
   },
 
