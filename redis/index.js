@@ -1,5 +1,2 @@
-const redis = require('redis');
-
-const redisClient = redis.createClient(/*pass in product url*/);
-
-module.exports = redisClient;
+exports.cache = require('./cache');
+exports.getCached = require('./getCached');
