@@ -12,10 +12,12 @@ module.exports = {
     redis.getCached(key, res)
       .then((cache) => {
         //if cache hits
+        console.log(cache);
         return;
       })
-      .catch(() => {
-        //if cache misses
+      .catch((err) => {
+        //if cache misses | remove console logs once confirmed working
+        console.log(err);
         models.reviews.getAll(param)
           .then((data) => {
             var response = transformResponse(req, data);

@@ -7,4 +7,4 @@ sudo apt-get update
 sudo apt-get install -y redis-server
 
 # Start Redis service
-sudo redis-server
+sudo systemctl start redis

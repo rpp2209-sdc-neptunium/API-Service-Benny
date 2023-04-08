@@ -1,25 +1,36 @@
-var models = require('../models/index.js');
+const models = require('../models/index.js');
+const redis = require('../redis/index.js');
+const transformParam = require('./utils/transformParam.js')
+
 
 module.exports = {
   get: async (req, res) => {
     //transform req.query
-    req.query.sort = 'helpfulness';
+    var param = transformParam(req.query);
+    var key = `meta?product_id=${param.product_id}`
     try {
-      var characteristics = await models.characteristics.get(req.query);
-      var recommend = await models.reviews.getRecommend(req.query);
-      var ratings = await models.reviews.getRatings(req.query);
-
-      var response = {
-        'product_id': req.query.product_id,
-        characteristics,
-        recommend,
-        ratings
-      };
-
-      res.status(200).json(response);
+      //if cache hits
+      var isCachced = await redis.getCached(key, res);
+      console.log(isCached);
     } catch (err) {
-      console.error(err);
-      res.status(400);
+      //if cache misses
+      console.log(err);
+      try {
+        var characteristics = await models.characteristics.get(param);
+        var recommend = await models.reviews.getRecommend(param);
+        var ratings = await models.reviews.getRatings(param);
+        var response = {
+          'product_id': req.query.product_id,
+          characteristics,
+          recommend,
+          ratings
+        }
+        redis.cache(key, response)
+        res.status(200).json(response);
+      } catch (err) {
+        console.error(err);
+        res.status(400);
+      }
     }
   }
 }
