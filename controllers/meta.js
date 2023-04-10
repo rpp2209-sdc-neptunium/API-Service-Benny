@@ -10,7 +10,7 @@ module.exports = {
     var key = `meta?product_id=${param.product_id}`
     try {
       //if cache hits
-      var isCachced = await redis.getCached(key, res);
+      var isCached = await redis.getCached(key, res);
       console.log(isCached);
     } catch (err) {
       //if cache misses
