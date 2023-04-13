@@ -17,16 +17,13 @@ module.exports = {
       console.log(err);
       try {
         const [characteristics, recommend, ratings] = await Promise.all([models.characteristics.get(param), models.reviews.getRecommend(param), models.reviews.getRatings(param)]);
-        // var recommend = models.reviews.getRecommend(param);
-        // var ratings = models.reviews.getRatings(param);
-        // await Promise.all([characteristics, recommend, ratings]);
         var response = {
           'product_id': req.query.product_id,
           characteristics,
           recommend,
           ratings
         }
-        // redis.cache(key, response)
+        redis.cache(key, response)
         res.status(200).json(response);
       } catch (err) {
         console.error(err);
